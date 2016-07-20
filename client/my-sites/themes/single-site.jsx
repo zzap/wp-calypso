@@ -5,6 +5,7 @@ import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import pickBy from 'lodash/pickBy';
+import merge from 'lodash/merge';
 
 /**
  * Internal dependencies
@@ -27,6 +28,7 @@ import {
 	info,
 	support,
 	help,
+	bindOptionsToState,
 	bindOptionsToDispatch,
 	bindOptionsToSite
 } from './theme-options';
@@ -106,15 +108,39 @@ const ThemesSingleSite = ( props ) => {
 	);
 };
 
+const myOptions = {
+	customize,
+	preview,
+	purchase,
+	activate,
+	tryandcustomize,
+	separator,
+	info,
+	support,
+	help
+};
+
 const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
 	const { selectedSite: site } = stateProps;
-	const options = dispatchProps;
 
+	const options = merge(
+		{},
+		myOptions,
+		dispatchProps,
+		stateProps.options
+	);
+
+	console.log( 'opt', myOptions, options );
+
+	// Move to stateProps
 	const filteredOptions = pickBy( options, option =>
 		! ( option.hideForSite && option.hideForSite( stateProps ) )
 	);
 
+	// dito
 	const boundOptions = bindOptionsToSite( filteredOptions, site );
+
+	console.log( 'bound customize', boundOptions.customize, boundOptions.info );
 
 	return Object.assign(
 		{},
@@ -135,19 +161,10 @@ export default connect(
 		return {
 			selectedSite,
 			isJetpack: selectedSite && isJetpackSite( state, selectedSite.ID ),
-			isCustomizable: selectedSite && canCurrentUser( state, selectedSite.ID, 'edit_theme_options' )
+			isCustomizable: selectedSite && canCurrentUser( state, selectedSite.ID, 'edit_theme_options' ),
+			options: bindOptionsToState( myOptions, state )
 		};
 	},
-	bindOptionsToDispatch( {
-		customize,
-		preview,
-		purchase,
-		activate,
-		tryandcustomize,
-		separator,
-		info,
-		support,
-		help
-	}, 'showcase' ),
+	bindOptionsToDispatch( myOptions, 'showcase' ),
 	mergeProps
 )( localize( ThemesSingleSite ) );
