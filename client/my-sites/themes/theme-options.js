@@ -15,14 +15,16 @@ import {
 	activate as activateAction
 } from 'state/themes/actions';
 import {
-	getSignupUrl,
-	getPurchaseUrl,
-	getCustomizeUrl,
-	getDetailsUrl,
-	getSupportUrl,
-	getHelpUrl,
 	isPremium
 } from './helpers';
+import {
+	getThemeSignupUrl as getSignupUrl,
+	getThemePurchaseUrl as getPurchaseUrl,
+	getThemeCustomizeUrl as	getCustomizeUrl,
+	getThemeDetailsUrl as getDetailsUrl,
+	getThemeSupportUrl as getSupportUrl,
+	getThemeHelpUrl as getHelpUrl
+} from 'state/themes/themes/selectors';
 
 export const purchase = config.isEnabled( 'upgrades/checkout' )
 	? {
@@ -49,7 +51,7 @@ export const customize = {
 	label: i18n.translate( 'Customize' ),
 	header: i18n.translate( 'Customize on:', { comment: 'label in the dialog for selecting a site for which to customize a theme' } ),
 	icon: 'customize',
-	getUrl: ( theme, site ) => getCustomizeUrl( theme, site ),
+	getUrl: ( state, theme ) => getCustomizeUrl( state, theme ),
 	hideForSite: ( { isCustomizable = false } = {} ) => ! isCustomizable,
 	hideForTheme: theme => ! theme.active
 };
@@ -59,7 +61,7 @@ export const tryandcustomize = {
 	header: i18n.translate( 'Try & Customize on:', {
 		comment: 'label in the dialog for opening the Customizer with the theme in preview'
 	} ),
-	getUrl: ( theme, site ) => getCustomizeUrl( theme, site ),
+	getUrl: ( state, theme ) => getCustomizeUrl( state, theme ),
 	hideForSite: ( { isCustomizable = false } = {} ) => ! isCustomizable,
 	hideForTheme: theme => theme.active
 };
@@ -78,7 +80,7 @@ export const signup = {
 	label: i18n.translate( 'Pick this design', {
 		comment: 'when signing up for a WordPress.com account with a selected theme'
 	} ),
-	getUrl: theme => getSignupUrl( theme )
+	getUrl: ( state, theme ) => getSignupUrl( state, theme )
 };
 
 export const separator = {
@@ -90,13 +92,13 @@ export const info = {
 		comment: 'label for displaying the theme info sheet'
 	} ),
 	icon: 'info',
-	getUrl: ( theme, site ) => getDetailsUrl( theme, site ), // TODO: Make this a selector
+	getUrl: ( state, theme ) => getDetailsUrl( state, theme ),
 };
 
 export const support = {
 	label: i18n.translate( 'Setup' ),
 	icon: 'help',
-	getUrl: ( theme, site ) => getSupportUrl( theme, site ),
+	getUrl: ( state, theme ) => getSupportUrl( state, theme ),
 	// We don't know where support docs for a given theme on a self-hosted WP install are.
 	hideForSite: ( { isJetpack = false } = {} ) => isJetpack,
 	hideForTheme: theme => ! isPremium( theme )
@@ -104,7 +106,7 @@ export const support = {
 
 export const help = {
 	label: i18n.translate( 'Support' ),
-	getUrl: ( theme, site ) => getHelpUrl( theme, site ),
+	getUrl: ( state, theme ) => getHelpUrl( state, theme ),
 	// We don't know where support docs for a given theme on a self-hosted WP install are.
 	hideForSite: ( { isJetpack = false } = {} ) => isJetpack,
 };

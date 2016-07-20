@@ -16,16 +16,6 @@ import route from 'lib/route';
 
 const oldShowcaseUrl = '//wordpress.com/themes/';
 
-export function getSignupUrl( theme ) {
-	let url = '/start/with-theme?ref=calypshowcase&theme=' + theme.id;
-
-	if ( isPremium( theme ) ) {
-		url += '&premium=true';
-	}
-
-	return url;
-}
-
 export function getPreviewUrl( theme, site ) {
 	if ( site && site.jetpack ) {
 		return site.options.admin_url + 'customize.php?theme=' + theme.id + '&return=' + encodeURIComponent( window.location );
@@ -64,35 +54,8 @@ export function getDetailsUrl( theme, site ) {
 	return baseUrl + ( site ? `/${ site.slug }` : '' );
 }
 
-export function getSupportUrl( theme, site ) {
-	if ( site && site.jetpack ) {
-		return '//wordpress.org/support/theme/' + theme.id;
-	}
-
-	const sitePart = site ? `/${ site.slug }` : '';
-
-	if ( config.isEnabled( 'manage/themes/details' ) ) {
-		return `/theme/${ theme.id }/setup${ sitePart }`;
-	}
-
-	return `${ oldShowcaseUrl }${ sitePart }${ theme.id }/support`;
-}
-
 export function getForumUrl( theme ) {
 	return isPremium( theme ) ? '//premium-themes.forums.wordpress.com/forum/' + theme.id : '//en.forums.wordpress.com/forum/themes';
-}
-
-export function getHelpUrl( theme, site ) {
-	if ( site && site.jetpack ) {
-		return getSupportUrl( theme, site );
-	}
-
-	let baseUrl = oldShowcaseUrl + theme.id;
-	if ( config.isEnabled( 'manage/themes/details' ) ) {
-		baseUrl = `/theme/${ theme.id }/support`;
-	}
-
-	return baseUrl + ( site ? `/${ site.slug }` : '' );
 }
 
 export function getExternalThemesUrl( site ) {
