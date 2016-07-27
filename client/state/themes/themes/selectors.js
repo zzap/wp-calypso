@@ -4,8 +4,7 @@
  * Internal dependencies
  */
 import config from 'config';
-import { getSiteSlug, isJetpackSite } from 'state/sites/selectors';
-import { getSelectedSite } from 'state/ui/selectors';
+import { getSiteSlug, getSiteOption, isJetpackSite } from 'state/sites/selectors';
 import { isPremium, oldShowcaseUrl } from 'my-sites/themes/helpers';
 
 export function getThemes( state ) {
@@ -17,15 +16,13 @@ export function getThemeById( state, id ) {
 	return theme ? theme.toJS() : undefined;
 }
 
-export function getThemeDetailsUrl( state, theme ) {
+export function getThemeDetailsUrl( state, theme, siteId ) {
 	if ( ! theme ) {
 		return null;
 	}
 
-	const site = getSelectedSite( state );
-
-	if ( site && isJetpackSite( state, site.ID ) ) {
-		return site.options.admin_url + 'themes.php?theme=' + theme.id;
+	if ( isJetpackSite( state, siteId ) ) {
+		return getSiteOption( state, siteId, 'admin_url' ) + 'themes.php?theme=' + theme.id;
 	}
 
 	let baseUrl = oldShowcaseUrl + theme.id;
@@ -33,21 +30,19 @@ export function getThemeDetailsUrl( state, theme ) {
 		baseUrl = `/theme/${ theme.id }`;
 	}
 
-	return baseUrl + ( site ? `/${ getSiteSlug( state, site.ID ) }` : '' );
+	return baseUrl + ( siteId ? `/${ getSiteSlug( state, siteId ) }` : '' );
 }
 
-export function getThemeSupportUrl( state, theme ) {
+export function getThemeSupportUrl( state, theme, siteId ) {
 	if ( ! theme ) {
 		return null;
 	}
 
-	const site = getSelectedSite( state );
-
-	if ( site && isJetpackSite( state, site.ID ) ) {
+	if ( isJetpackSite( state, siteId ) ) {
 		return '//wordpress.org/support/theme/' + theme.id;
 	}
 
-	const sitePart = site ? `/${ getSiteSlug( state, site.ID ) }` : '';
+	const sitePart = siteId ? `/${ getSiteSlug( state, siteId ) }` : '';
 
 	if ( config.isEnabled( 'manage/themes/details' ) ) {
 		return `/theme/${ theme.id }/setup${ sitePart }`;
@@ -56,15 +51,13 @@ export function getThemeSupportUrl( state, theme ) {
 	return `${ oldShowcaseUrl }${ sitePart }${ theme.id }/support`;
 }
 
-export function getThemeHelpUrl( state, theme ) {
+export function getThemeHelpUrl( state, theme, siteId ) {
 	if ( ! theme ) {
 		return null;
 	}
 
-	const site = getSelectedSite( state );
-
-	if ( site && site.jetpack ) {
-		return getThemeSupportUrl( state, theme );
+	if ( isJetpackSite( state, siteId ) ) {
+		return getThemeSupportUrl( state, theme, siteId );
 	}
 
 	let baseUrl = oldShowcaseUrl + theme.id;
@@ -72,29 +65,30 @@ export function getThemeHelpUrl( state, theme ) {
 		baseUrl = `/theme/${ theme.id }/support`;
 	}
 
-	return baseUrl + ( site ? `/${ site.slug }` : '' );
+	return baseUrl + ( siteId ? `/${ getSiteSlug( state, siteId ) }` : '' );
 }
 
-export function getThemePurchaseUrl( state, theme, site ) {
-	return `/checkout/${ site.slug }/theme:${ theme.id }`;
+export function getThemePurchaseUrl( state, theme, siteId ) {
+	return `/checkout/${ getSiteSlug( state, siteId ) }/theme:${ theme.id }`;
 }
 
-export function getThemeCustomizeUrl( state, theme ) {
+export function getThemeCustomizeUrl( state, theme, siteId ) {
 	if ( ! theme ) {
 		return null;
 	}
 
-	const site = getSelectedSite( state );
-
-	if ( ! site ) {
+	if ( ! siteId ) {
 		return '/customize/';
 	}
 
-	if ( site.jetpack ) {
-		return site.options.admin_url + 'customize.php?return=' + encodeURIComponent( window.location ) + ( theme ? '&theme=' + theme.id : '' );
+	if ( isJetpackSite( state, siteId ) ) {
+		return getSiteOption( state, siteId, 'admin_url' ) +
+			'customize.php?return=' +
+			encodeURIComponent( window.location ) +
+			( theme ? '&theme=' + theme.id : '' );
 	}
 
-	return '/customize/' + site.slug + ( theme && theme.stylesheet ? '?theme=' + theme.stylesheet : '' );
+	return '/customize/' + getSiteSlug( state, siteId ) + ( theme && theme.stylesheet ? '?theme=' + theme.stylesheet : '' );
 }
 
 export function getThemeSignupUrl( state, theme ) {
