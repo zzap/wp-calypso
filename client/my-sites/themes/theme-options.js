@@ -130,7 +130,7 @@ export function bindOptionsToDispatch( options, source ) {
 
 function bindOptionToState( option, state ) {
 	return option.getUrl
-		? { getUrl: ( theme, site ) => option.getUrl( state, theme, site ) }
+		? { getUrl: ( theme, siteId ) => option.getUrl( state, theme, siteId ) }
 		: {};
 }
 
@@ -140,16 +140,19 @@ export function bindOptionsToState( options, state ) {
 }
 
 // Ideally: same sig as mergeProps. stateProps, dispatchProps, ownProps
-function bindOptionToSite( option, site ) {
+function bindOptionToSite( option, siteId ) {
 	return Object.assign(
 		{},
 		option,
 		option.action
-			? { action: theme => option.action( theme, site ) }
+			? { action: theme => option.action( theme, siteId ) }
+			: {},
+		option.getUrl
+			? { getUrl: theme => option.getUrl( theme, siteId ) }
 			: {},
 	);
 }
 
-export function bindOptionsToSite( options, site ) {
-	return mapValues( options, option => bindOptionToSite( option, site ) );
+export function bindOptionsToSite( options, siteId ) {
+	return mapValues( options, option => bindOptionToSite( option, siteId ) );
 }

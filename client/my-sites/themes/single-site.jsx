@@ -138,7 +138,7 @@ const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
 	);
 
 	// dito
-	const boundOptions = bindOptionsToSite( filteredOptions, site );
+	const boundOptions = bindOptionsToSite( filteredOptions, site.ID );
 
 	console.log( 'bound customize', boundOptions.customize, boundOptions.info );
 
