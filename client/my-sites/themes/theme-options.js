@@ -140,19 +140,19 @@ export function bindOptionsToState( options, state ) {
 }
 
 // Ideally: same sig as mergeProps. stateProps, dispatchProps, ownProps
-function bindOptionToSite( option, siteId ) {
+function bindOptionToSite( option, site ) {
 	return Object.assign(
 		{},
 		option,
 		option.action
-			? { action: theme => option.action( theme, siteId ) }
+			? { action: theme => option.action( theme, site ) } // TODO: Change actions to use siteId.
 			: {},
 		option.getUrl
-			? { getUrl: theme => option.getUrl( theme, siteId ) }
+			? { getUrl: theme => option.getUrl( theme, site.ID ) }
 			: {},
 	);
 }
 
-export function bindOptionsToSite( options, siteId ) {
-	return mapValues( options, option => bindOptionToSite( option, siteId ) );
+export function bindOptionsToSite( options, site ) {
+	return mapValues( options, option => bindOptionToSite( option, site ) );
 }

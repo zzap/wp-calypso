@@ -196,7 +196,7 @@ export default connect(
 
 		return {
 			currentTheme,
-			detailsUrl: getThemeDetailsUrl( state, currentTheme ),
+			detailsUrl: props.site && getThemeDetailsUrl( state, currentTheme, props.site.ID ),
 			isActivating: isActivating( state ),
 			hasActivated: hasActivated( state ),
 		};
