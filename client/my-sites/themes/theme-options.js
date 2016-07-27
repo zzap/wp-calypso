@@ -51,7 +51,7 @@ export const customize = {
 	label: i18n.translate( 'Customize' ),
 	header: i18n.translate( 'Customize on:', { comment: 'label in the dialog for selecting a site for which to customize a theme' } ),
 	icon: 'customize',
-	getUrl: ( state, theme ) => getCustomizeUrl( state, theme ),
+	getUrl: getCustomizeUrl,
 	hideForSite: ( { isCustomizable = false } = {} ) => ! isCustomizable,
 	hideForTheme: theme => ! theme.active
 };
@@ -61,7 +61,7 @@ export const tryandcustomize = {
 	header: i18n.translate( 'Try & Customize on:', {
 		comment: 'label in the dialog for opening the Customizer with the theme in preview'
 	} ),
-	getUrl: ( state, theme ) => getCustomizeUrl( state, theme ),
+	getUrl: getCustomizeUrl,
 	hideForSite: ( { isCustomizable = false } = {} ) => ! isCustomizable,
 	hideForTheme: theme => theme.active
 };
@@ -80,7 +80,7 @@ export const signup = {
 	label: i18n.translate( 'Pick this design', {
 		comment: 'when signing up for a WordPress.com account with a selected theme'
 	} ),
-	getUrl: ( state, theme ) => getSignupUrl( state, theme )
+	getUrl: getSignupUrl
 };
 
 export const separator = {
@@ -92,13 +92,13 @@ export const info = {
 		comment: 'label for displaying the theme info sheet'
 	} ),
 	icon: 'info',
-	getUrl: ( state, theme ) => getDetailsUrl( state, theme ),
+	getUrl: getDetailsUrl,
 };
 
 export const support = {
 	label: i18n.translate( 'Setup' ),
 	icon: 'help',
-	getUrl: ( state, theme ) => getSupportUrl( state, theme ),
+	getUrl: getSupportUrl,
 	// We don't know where support docs for a given theme on a self-hosted WP install are.
 	hideForSite: ( { isJetpack = false } = {} ) => isJetpack,
 	hideForTheme: theme => ! isPremium( theme )
@@ -106,7 +106,7 @@ export const support = {
 
 export const help = {
 	label: i18n.translate( 'Support' ),
-	getUrl: ( state, theme ) => getHelpUrl( state, theme ),
+	getUrl: getHelpUrl,
 	// We don't know where support docs for a given theme on a self-hosted WP install are.
 	hideForSite: ( { isJetpack = false } = {} ) => isJetpack,
 };
@@ -130,7 +130,7 @@ export function bindOptionsToDispatch( options, source ) {
 
 function bindOptionToState( option, state ) {
 	return option.getUrl
-		? { getUrl: theme => option.getUrl( state, theme ) }
+		? { getUrl: ( theme, site ) => option.getUrl( state, theme, site ) }
 		: {};
 }
 
