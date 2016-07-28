@@ -16,6 +16,7 @@ import {
 	customize,
 	info,
 	support,
+	bindOptionsToState,
 	bindOptionsToDispatch,
 	bindOptionsToSite
 } from '../theme-options';
@@ -84,39 +85,32 @@ const CurrentTheme = React.createClass( {
 	}
 } );
 
-const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
-	const { site } = ownProps;
-	// FIXME (ockham): Remove this ugly hack. Currently required since the endpoint doesn't return an `active` attr
-	const theme = Object.assign( {}, stateProps.currentTheme, { active: true } );
-
-	const filteredOptions = pickBy( dispatchProps, option =>
-		! ( option.hideForSite && option.hideForSite( stateProps ) ) &&
-		! ( option.hideForTheme && option.hideForTheme( theme ) )
-	);
-
-	return Object.assign(
-		{},
-		ownProps,
-		stateProps,
-		{
-			options: bindOptionsToSite( filteredOptions, site )
-		}
-	);
+const myOptions = {
+	customize,
+	info,
+	support
 };
 
 export default connect(
 	( state, props ) => {
 		const { site: selectedSite } = props;
+		const currentTheme = selectedSite && getCurrentTheme( state, selectedSite.ID );
+		const theme = Object.assign( {}, currentTheme, { active: true } );
+
+		const options = bindOptionsToState( myOptions, state );
+
+		const filteredOptions = pickBy( options, option => ! option.hideForSite &&
+			! ( option.hideForTheme && option.hideForTheme( theme ) )
+		);
+
+		const boundOptions = bindOptionsToSite( filteredOptions, selectedSite );
+
 		return {
 			isJetpack: selectedSite && isJetpackSite( state, selectedSite.ID ),
 			isCustomizable: selectedSite && canCurrentUser( state, selectedSite.ID, 'edit_theme_options' ),
-			currentTheme: selectedSite && getCurrentTheme( state, selectedSite.ID )
+			currentTheme,
+			options: boundOptions
 		};
 	},
-	bindOptionsToDispatch( {
-		customize,
-		info,
-		support
-	}, 'current theme' ),
-	mergeProps
+	bindOptionsToDispatch( myOptions, 'current theme' )
 )( CurrentTheme );

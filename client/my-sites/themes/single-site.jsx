@@ -121,8 +121,6 @@ const myOptions = {
 };
 
 const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
-	const { selectedSite: site } = stateProps;
-
 	const options = merge(
 		{},
 		myOptions,
@@ -130,27 +128,15 @@ const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
 		stateProps.options
 	);
 
-	console.log( 'opt', myOptions, options );
-
-	// Move to stateProps
-	const filteredOptions = pickBy( options, option =>
-		! ( option.hideForSite && option.hideForSite( stateProps ) )
-	);
-
-	// dito
-	const boundOptions = bindOptionsToSite( filteredOptions, site );
-
-	console.log( 'bound customize', boundOptions.customize, boundOptions.info );
-
 	return Object.assign(
 		{},
 		ownProps,
 		stateProps,
 		{
-			options: boundOptions,
-			defaultOption: boundOptions.activate,
-			secondaryOption: boundOptions.tryandcustomize,
-			getScreenshotOption: theme => theme.active ? boundOptions.customize : boundOptions.info
+			options,
+			defaultOption: options.activate,
+			secondaryOption: options.tryandcustomize,
+			getScreenshotOption: theme => theme.active ? options.customize : options.info
 		}
 	);
 };
@@ -158,11 +144,19 @@ const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
 export default connect(
 	state => {
 		const selectedSite = getSelectedSite( state );
+		const options = bindOptionsToState( myOptions, state );
+		const filteredOptions = pickBy( options, option => ! option.hideForSite );
+
+		// dito
+		const boundOptions = bindOptionsToSite( filteredOptions, selectedSite );
+
+		console.log( 'bound customize', boundOptions.customize, boundOptions.info );
+
 		return {
 			selectedSite,
 			isJetpack: selectedSite && isJetpackSite( state, selectedSite.ID ),
 			isCustomizable: selectedSite && canCurrentUser( state, selectedSite.ID, 'edit_theme_options' ),
-			options: bindOptionsToState( myOptions, state )
+			options: filteredOptions
 		};
 	},
 	bindOptionsToDispatch( myOptions, 'showcase' ),

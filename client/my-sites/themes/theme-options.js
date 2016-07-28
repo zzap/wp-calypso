@@ -25,6 +25,8 @@ import {
 	getThemeSupportUrl as getSupportUrl,
 	getThemeHelpUrl as getHelpUrl
 } from 'state/themes/themes/selectors';
+import { isJetpackSite } from 'state/sites/selectors';
+import { canCurrentUser } from 'state/current-user/selectors';
 
 export const purchase = config.isEnabled( 'upgrades/checkout' )
 	? {
@@ -52,7 +54,7 @@ export const customize = {
 	header: i18n.translate( 'Customize on:', { comment: 'label in the dialog for selecting a site for which to customize a theme' } ),
 	icon: 'customize',
 	getUrl: getCustomizeUrl,
-	hideForSite: ( { isCustomizable = false } = {} ) => ! isCustomizable,
+	hideForSite: ( state, site ) => ! canCurrentUser( state, site, 'edit_theme_options' ),
 	hideForTheme: theme => ! theme.active
 };
 
@@ -62,7 +64,7 @@ export const tryandcustomize = {
 		comment: 'label in the dialog for opening the Customizer with the theme in preview'
 	} ),
 	getUrl: getCustomizeUrl,
-	hideForSite: ( { isCustomizable = false } = {} ) => ! isCustomizable,
+	hideForSite: ( state, site ) => ! canCurrentUser( state, site, 'edit_theme_options' ),
 	hideForTheme: theme => theme.active
 };
 
@@ -72,7 +74,7 @@ export const preview = {
 	label: i18n.translate( 'Live demo', {
 		comment: 'label for previewing the theme demo website'
 	} ),
-	hideForSite: ( { isJetpack = false } = {} ) => isJetpack,
+	hideForSite: ( state, site ) => isJetpackSite( state, site ),
 	hideForTheme: theme => theme.active
 };
 
@@ -100,7 +102,7 @@ export const support = {
 	icon: 'help',
 	getUrl: getSupportUrl,
 	// We don't know where support docs for a given theme on a self-hosted WP install are.
-	hideForSite: ( { isJetpack = false } = {} ) => isJetpack,
+	hideForSite: ( state, site ) => isJetpackSite( state, site ),
 	hideForTheme: theme => ! isPremium( theme )
 };
 
@@ -108,7 +110,7 @@ export const help = {
 	label: i18n.translate( 'Support' ),
 	getUrl: getHelpUrl,
 	// We don't know where support docs for a given theme on a self-hosted WP install are.
-	hideForSite: ( { isJetpack = false } = {} ) => isJetpack,
+	hideForSite: ( state, site ) => isJetpackSite( state, site ),
 };
 
 export function bindOptionToDispatch( option, source ) {
@@ -129,9 +131,15 @@ export function bindOptionsToDispatch( options, source ) {
 }
 
 function bindOptionToState( option, state ) {
-	return option.getUrl
-		? { getUrl: ( theme, siteId ) => option.getUrl( state, theme, siteId ) }
-		: {};
+	return Object.assign(
+		{},
+		option.getUrl
+			? { getUrl: ( theme, siteId ) => option.getUrl( state, theme, siteId ) }
+			: {},
+		option.hideForSite
+			? { hideForSite: siteId => option.hideForSite( state, siteId ) }
+			: {},
+	);
 }
 
 // Sig: state, ownProps?
@@ -149,6 +157,9 @@ function bindOptionToSite( option, site ) {
 			: {},
 		option.getUrl
 			? { getUrl: theme => option.getUrl( theme, site.ID ) }
+			: {},
+		option.hideForSite
+			? { hideForSite: option.hideForSite( site.ID ) }
 			: {},
 	);
 }
