@@ -115,12 +115,9 @@ const bindSingleSite = ( state ) => {
 
 const ThemesSingleSite = connect( bindSingleSite )( localize( ThemesSingleSiteBase ) );
 
-const bindToSite = ( state, { options } ) => {
-	const selectedSite = getSelectedSite( state );
-	return {
-		options: bindOptionsToSite( options, selectedSite )
-	};
-};
+const bindToSite = ( state, { options } ) => ( {
+	options: bindOptionsToSite( options, getSelectedSite( state ) )
+} );
 
 const ThemeShowcaseBoundToSite = connect( bindToSite )( ThemesSingleSite );
 
