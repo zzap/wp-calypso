@@ -20,7 +20,7 @@ import {
 } from './theme-options';
 import ThemeShowcase from './theme-showcase';
 
-const ThemesMultiSite = props => (
+export default props => (
 	<ThemesSiteSelectorModal options={ {
 		preview,
 		purchase,
@@ -42,5 +42,3 @@ const ThemesMultiSite = props => (
 		</ThemeShowcase>
 	</ThemesSiteSelectorModal>
 );
-
-export default ThemesMultiSite;
