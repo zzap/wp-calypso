@@ -126,8 +126,8 @@ export function bindOptionToDispatch( option, source ) {
 	);
 }
 
-export function bindOptionsToDispatch( options, source ) {
-	return dispatch => mapValues( options, option => bindOptionToDispatch( option, source )( dispatch ) );
+export function bindOptionsToDispatch( source ) {
+	return ( dispatch, ownProps ) => mapValues( ownProps.options, option => bindOptionToDispatch( option, source )( dispatch ) );
 }
 
 function bindOptionToState( option, state ) {
@@ -154,13 +154,13 @@ function bindOptionToSite( option, site ) {
 		{},
 		option,
 		option.action
-			? { action: theme => option.action( theme, site ) } // TODO: Change actions to use siteId.
+			? { action: theme => option.action( theme, site ) } // TODO (@ockham): Change actions to use siteId.
 			: {},
 		option.getUrl
-			? { getUrl: theme => option.getUrl( theme, site.ID ) }
+			? { getUrl: ( state, theme ) => option.getUrl( state, theme, site.ID ) }
 			: {},
 		option.hideForSite
-			? { hideForSite: option.hideForSite( site.ID ) }
+			? { hideForSite: state => option.hideForSite( state, site.ID ) }
 			: {},
 	);
 }

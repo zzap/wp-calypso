@@ -108,18 +108,6 @@ const ThemesSingleSite = ( props ) => {
 	);
 };
 
-const myOptions = {
-	customize,
-	preview,
-	purchase,
-	activate,
-	tryandcustomize,
-	separator,
-	info,
-	support,
-	help
-};
-
 const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
 	const options = merge(
 		{},
@@ -133,44 +121,64 @@ const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
 		stateProps,
 		{
 			options,
-			defaultOption: options.activate,
-			secondaryOption: options.tryandcustomize,
-			getScreenshotOption: theme => theme.active ? options.customize : options.info
+			defaultOption: options[ ownProps.defaultOption ],
+			secondaryOption: options[ ownProps.secondaryOption ],
+			getScreenshotOption: function( theme ) {
+				const screenshotOption = ownProps.getScreenshotOption( theme );
+				return options[ screenshotOption ];
+			}
 		}
 	);
 };
 
-function bindToSite() {
-	return connect(
-		state => {
-			const selectedSite = getSelectedSite( state );
-			const options = bindOptionsToState( myOptions, state );
+const bindToSite = ( state, { options } ) => {
+	const selectedSite = getSelectedSite( state );
+	return {
+		options: bindOptionsToSite( options, selectedSite )
+	};
+};
 
-			// dito
-			const boundOptions = bindOptionsToSite( options, selectedSite );
-		}
-	);
-}
-
-export default connect(
-	state => {
+const ThemeShowcaseBoundToSite = connect( bindToSite )( connect(
+	( state, ownProps ) => {
+		const { options } = ownProps;
 		const selectedSite = getSelectedSite( state );
-		const options = bindOptionsToState( myOptions, state );
+		const filteredOptions = bindOptionsToState( options, state );
 
-		// dito
-		const boundOptions = bindOptionsToSite( options, selectedSite );
+		//const filteredOptions = pickBy( boundOptions, option => ! option.hideForSite );
 
-		const filteredOptions = pickBy( boundOptions, option => ! option.hideForSite );
+		console.log( 'bound customize', filteredOptions.customize, filteredOptions.info );
 
-		console.log( 'bound customize', filteredOptions, boundOptions.customize, boundOptions.info );
-
-		return {
+		return { // what about sitebound stuff?
 			selectedSite,
 			isJetpack: selectedSite && isJetpackSite( state, selectedSite.ID ),
 			isCustomizable: selectedSite && canCurrentUser( state, selectedSite.ID, 'edit_theme_options' ),
 			options: filteredOptions
 		};
 	},
-	bindOptionsToDispatch( myOptions, 'showcase' ),
+	bindOptionsToDispatch( 'showcase' ),
 	mergeProps
-)( localize( ThemesSingleSite ) );
+)( localize( ThemesSingleSite ) ) );
+
+function SingleSiteThemeShowcase( props ) {
+	return (
+		<ThemeShowcaseBoundToSite { ...props }
+			options={ {
+				customize,
+				preview,
+				purchase,
+				activate,
+				tryandcustomize,
+				separator,
+				info,
+				support,
+				help
+			} }
+			defaultOption="activate"
+			secondaryOption="tryandcustomize"
+			getScreenshotOption={ function( theme ) {
+				return theme.active ? 'customize' : 'info';
+			} } />
+	);
+}
+
+export default SingleSiteThemeShowcase;
