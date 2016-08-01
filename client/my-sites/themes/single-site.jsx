@@ -106,7 +106,7 @@ const ThemesSingleSiteBase = ( props ) => {
 
 const bindSingleSite = ( state ) => {
 	const selectedSite = getSelectedSite( state );
-	return { // what about sitebound stuff?
+	return {
 		selectedSite,
 		isJetpack: selectedSite && isJetpackSite( state, selectedSite.ID ),
 		isCustomizable: selectedSite && canCurrentUser( state, selectedSite.ID, 'edit_theme_options' )
@@ -124,26 +124,22 @@ const bindToSite = ( state, { options } ) => {
 
 const ThemeShowcaseBoundToSite = connect( bindToSite )( ThemesSingleSite );
 
-function SingleSiteThemeShowcase( props ) {
-	return (
-		<ThemeShowcaseBoundToSite { ...props }
-			options={ {
-				customize,
-				preview,
-				purchase,
-				activate,
-				tryandcustomize,
-				separator,
-				info,
-				support,
-				help
-			} }
-			defaultOption="activate"
-			secondaryOption="tryandcustomize"
-			getScreenshotOption={ function( theme ) {
-				return theme.active ? 'customize' : 'info';
-			} } />
-	);
-}
-
-export default SingleSiteThemeShowcase;
+export default props => (
+	<ThemeShowcaseBoundToSite { ...props }
+		options={ {
+			customize,
+			preview,
+			purchase,
+			activate,
+			tryandcustomize,
+			separator,
+			info,
+			support,
+			help
+		} }
+		defaultOption="activate"
+		secondaryOption="tryandcustomize"
+		getScreenshotOption={ function( theme ) {
+			return theme.active ? 'customize' : 'info';
+		} } />
+);
