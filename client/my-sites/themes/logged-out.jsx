@@ -1,7 +1,7 @@
 /**
  * External dependencies
  */
-import { connect } from 'react-redux';
+import React from 'react';
 
 /**
  * Internal dependencies
@@ -14,29 +14,20 @@ import {
 	info,
 	support,
 	help,
-	bindOptionsToDispatch
 } from './theme-options';
 
-const mergeProps = ( stateProps, dispatchProps, ownProps ) => Object.assign(
-	{},
-	ownProps,
-	stateProps,
-	{
-		options: dispatchProps,
-		defaultOption: dispatchProps.signup,
-		getScreenshotOption: () => dispatchProps.info
-	}
-);
-
-export default connect(
-	null,
-	bindOptionsToDispatch( {
+export default props => (
+	<ThemeShowcase { ...props }
+	options={ {
 		signup,
 		preview,
 		separator,
 		info,
 		support,
 		help
-	}, 'showcase' ),
-	mergeProps
-)( ThemeShowcase );
+	} }
+	defaultOption="signup"
+	getScreenshotOption={ function() {
+		return 'info';
+	} } />
+);
