@@ -123,9 +123,8 @@ const myOptions = {
 const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
 	const options = merge(
 		{},
-		myOptions,
-		dispatchProps,
-		stateProps.options
+		stateProps.options,
+		dispatchProps
 	);
 
 	return Object.assign(
@@ -145,12 +144,13 @@ export default connect(
 	state => {
 		const selectedSite = getSelectedSite( state );
 		const options = bindOptionsToState( myOptions, state );
-		const filteredOptions = pickBy( options, option => ! option.hideForSite );
 
 		// dito
-		const boundOptions = bindOptionsToSite( filteredOptions, selectedSite );
+		const boundOptions = bindOptionsToSite( options, selectedSite );
 
-		console.log( 'bound customize', boundOptions.customize, boundOptions.info );
+		const filteredOptions = pickBy( boundOptions, option => ! option.hideForSite );
+
+		console.log( 'bound customize', filteredOptions, boundOptions.customize, boundOptions.info );
 
 		return {
 			selectedSite,

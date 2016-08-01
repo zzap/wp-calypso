@@ -6,6 +6,7 @@ import classNames from 'classnames';
 import { connect } from 'react-redux';
 import map from 'lodash/map';
 import pickBy from 'lodash/pickBy';
+import omit from 'lodash/omit';
 
 /**
  * Internal dependencies
@@ -17,8 +18,7 @@ import {
 	info,
 	support,
 	bindOptionsToState,
-	bindOptionsToDispatch,
-	bindOptionsToSite
+	bindOptionsToDispatch
 } from '../theme-options';
 import { trackClick } from '../helpers';
 import { isJetpackSite } from 'state/sites/selectors';
@@ -91,6 +91,32 @@ const myOptions = {
 	support
 };
 
+const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
+	const options = Object.assign(
+		{},
+		stateProps.options,
+		dispatchProps,
+	);
+
+	console.log( 'mergeProps', omit( stateProps, 'options' ), { options }, Object.assign(
+		{},
+		ownProps,
+		omit( stateProps, 'options' ),
+		{
+			options
+		}
+	) );
+
+	return Object.assign(
+		{},
+		ownProps,
+		omit( stateProps, 'options' ),
+		{
+			options
+		}
+	);
+};
+
 export default connect(
 	( state, props ) => {
 		const { site: selectedSite } = props;
@@ -98,19 +124,21 @@ export default connect(
 		const theme = Object.assign( {}, currentTheme, { active: true } );
 
 		const options = bindOptionsToState( myOptions, state );
+		//const boundOptions = bindOptionsToSite( options, selectedSite );
 
 		const filteredOptions = pickBy( options, option => ! option.hideForSite &&
 			! ( option.hideForTheme && option.hideForTheme( theme ) )
 		);
 
-		const boundOptions = bindOptionsToSite( filteredOptions, selectedSite );
+		console.log( 'options et al', options, filteredOptions );
 
 		return {
 			isJetpack: selectedSite && isJetpackSite( state, selectedSite.ID ),
 			isCustomizable: selectedSite && canCurrentUser( state, selectedSite.ID, 'edit_theme_options' ),
 			currentTheme,
-			options: boundOptions
+			options: filteredOptions
 		};
 	},
-	bindOptionsToDispatch( myOptions, 'current theme' )
+	bindOptionsToDispatch( myOptions, 'current theme' ),
+	mergeProps
 )( CurrentTheme );

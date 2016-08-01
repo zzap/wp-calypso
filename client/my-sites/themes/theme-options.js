@@ -116,7 +116,7 @@ export const help = {
 export function bindOptionToDispatch( option, source ) {
 	return dispatch => Object.assign(
 		{},
-		option,
+		//option,
 		option.action
 			? { action: bindActionCreators(
 				( theme, site ) => option.action( theme, site, source ),
@@ -133,6 +133,7 @@ export function bindOptionsToDispatch( options, source ) {
 function bindOptionToState( option, state ) {
 	return Object.assign(
 		{},
+		option,
 		option.getUrl
 			? { getUrl: ( theme, siteId ) => option.getUrl( state, theme, siteId ) }
 			: {},
