@@ -140,6 +140,18 @@ const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
 	);
 };
 
+function bindToSite() {
+	return connect(
+		state => {
+			const selectedSite = getSelectedSite( state );
+			const options = bindOptionsToState( myOptions, state );
+
+			// dito
+			const boundOptions = bindOptionsToSite( options, selectedSite );
+		}
+	);
+}
+
 export default connect(
 	state => {
 		const selectedSite = getSelectedSite( state );
