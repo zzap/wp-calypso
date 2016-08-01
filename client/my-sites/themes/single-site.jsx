@@ -4,8 +4,6 @@
 import React from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
-import pickBy from 'lodash/pickBy';
-import merge from 'lodash/merge';
 
 /**
  * Internal dependencies
@@ -28,8 +26,6 @@ import {
 	info,
 	support,
 	help,
-	bindOptionsToState,
-	bindOptionsToDispatch,
 	bindOptionsToSite
 } from './theme-options';
 import sitesFactory from 'lib/sites-list';
@@ -108,29 +104,6 @@ const ThemesSingleSiteBase = ( props ) => {
 	);
 };
 
-const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
-	const options = merge(
-		{},
-		stateProps.options,
-		dispatchProps
-	);
-
-	return Object.assign(
-		{},
-		ownProps,
-		stateProps,
-		{
-			options,
-			defaultOption: options[ ownProps.defaultOption ],
-			secondaryOption: options[ ownProps.secondaryOption ],
-			getScreenshotOption: function( theme ) {
-				const screenshotOption = ownProps.getScreenshotOption( theme );
-				return options[ screenshotOption ];
-			}
-		}
-	);
-};
-
 const bindSingleSite = ( state ) => {
 	const selectedSite = getSelectedSite( state );
 	return { // what about sitebound stuff?
@@ -149,21 +122,7 @@ const bindToSite = ( state, { options } ) => {
 	};
 };
 
-const ThemeShowcaseBoundToSite = connect( bindToSite )( connect(
-	( state, ownProps ) => {
-		const { options } = ownProps;
-		const filteredOptions = bindOptionsToState( options, state );
-
-		// FIXME!
-		//const filteredOptions = pickBy( boundOptions, option => ! option.hideForSite );
-
-		return {
-			options: filteredOptions
-		};
-	},
-	bindOptionsToDispatch( 'showcase' ),
-	mergeProps
-)( ThemesSingleSite ) );
+const ThemeShowcaseBoundToSite = connect( bindToSite )( ThemesSingleSite );
 
 function SingleSiteThemeShowcase( props ) {
 	return (

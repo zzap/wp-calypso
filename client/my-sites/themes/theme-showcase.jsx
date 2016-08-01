@@ -5,6 +5,7 @@ import React, { PropTypes } from 'react';
 import { connect } from 'react-redux';
 import { localize } from 'i18n-calypso';
 import pickBy from 'lodash/pickBy';
+import merge from 'lodash/merge';
 
 /**
  * Internal dependencies
@@ -16,6 +17,7 @@ import PageViewTracker from 'lib/analytics/page-view-tracker';
 import { getQueryParams, getThemesList } from 'state/themes/themes-list/selectors';
 import { addTracking } from './helpers';
 import DocumentHead from 'components/data/document-head';
+import { bindOptionsToState, bindOptionsToDispatch } from './theme-options';
 
 const themesMeta = {
 	'': {
@@ -170,8 +172,35 @@ const ThemeShowcase = React.createClass( {
 	}
 } );
 
-export default connect( state => ( {
-	queryParams: getQueryParams( state ),
-	themesList: getThemesList( state )
-} )
+const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
+	const options = merge(
+		{},
+		stateProps.options,
+		dispatchProps
+	);
+
+	return Object.assign(
+		{},
+		ownProps,
+		stateProps,
+		{
+			options,
+			defaultOption: options[ ownProps.defaultOption ],
+			secondaryOption: options[ ownProps.secondaryOption ],
+			getScreenshotOption: function( theme ) {
+				const screenshotOption = ownProps.getScreenshotOption( theme );
+				return options[ screenshotOption ];
+			}
+		}
+	);
+};
+
+export default connect(
+	( state, { options } ) => ( {
+		queryParams: getQueryParams( state ),
+		themesList: getThemesList( state ),
+		options: bindOptionsToState( options, state )
+	} ),
+	bindOptionsToDispatch( 'showcase' ),
+	mergeProps
 )( localize( ThemeShowcase ) );
