@@ -61,7 +61,7 @@ const JetpackThemeReferrerPage = localize(
 	)
 );
 
-const ThemesSingleSite = ( props ) => {
+const ThemesSingleSiteBase = ( props ) => {
 	const site = sites.getSelectedSite(),
 		{ analyticsPath, analyticsPageTitle, isJetpack, translate } = props,
 		jetpackEnabled = config.isEnabled( 'manage/themes-jetpack' );
@@ -131,6 +131,17 @@ const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
 	);
 };
 
+const bindSingleSite = ( state ) => {
+	const selectedSite = getSelectedSite( state );
+	return { // what about sitebound stuff?
+		selectedSite,
+		isJetpack: selectedSite && isJetpackSite( state, selectedSite.ID ),
+		isCustomizable: selectedSite && canCurrentUser( state, selectedSite.ID, 'edit_theme_options' )
+	};
+};
+
+const ThemesSingleSite = connect( bindSingleSite )( localize( ThemesSingleSiteBase ) );
+
 const bindToSite = ( state, { options } ) => {
 	const selectedSite = getSelectedSite( state );
 	return {
@@ -141,23 +152,18 @@ const bindToSite = ( state, { options } ) => {
 const ThemeShowcaseBoundToSite = connect( bindToSite )( connect(
 	( state, ownProps ) => {
 		const { options } = ownProps;
-		const selectedSite = getSelectedSite( state );
 		const filteredOptions = bindOptionsToState( options, state );
 
+		// FIXME!
 		//const filteredOptions = pickBy( boundOptions, option => ! option.hideForSite );
 
-		console.log( 'bound customize', filteredOptions.customize, filteredOptions.info );
-
-		return { // what about sitebound stuff?
-			selectedSite,
-			isJetpack: selectedSite && isJetpackSite( state, selectedSite.ID ),
-			isCustomizable: selectedSite && canCurrentUser( state, selectedSite.ID, 'edit_theme_options' ),
+		return {
 			options: filteredOptions
 		};
 	},
 	bindOptionsToDispatch( 'showcase' ),
 	mergeProps
-)( localize( ThemesSingleSite ) ) );
+)( ThemesSingleSite ) );
 
 function SingleSiteThemeShowcase( props ) {
 	return (
