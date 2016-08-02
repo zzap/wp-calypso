@@ -17,7 +17,7 @@ import {
 	info,
 	support,
 	bindToSite,
-	bindOptionsToState,
+	bindToState,
 	bindOptionsToDispatch
 } from '../theme-options';
 import { trackClick } from '../helpers';
@@ -98,9 +98,7 @@ const bindToTheme = ( state, { site, options } ) => {
 };
 
 const ConnectedCurrentTheme = connect( bindToSite )( connect(
-	( state, { options } ) => ( {
-		options: bindOptionsToState( options, state )
-	} ),
+	bindToState,
 	bindOptionsToDispatch( 'current theme' ),
 	mergeProps
 )( connect( bindToTheme )( CurrentTheme ) ) );

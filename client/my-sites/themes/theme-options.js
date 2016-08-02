@@ -149,6 +149,10 @@ export function bindOptionsToState( options, state ) {
 	return mapValues( options, option => bindOptionToState( option, state ) );
 }
 
+export const bindToState = ( state, { options } ) => ( {
+	options: bindOptionsToState( options, state )
+} );
+
 // Ideally: same sig as mergeProps. stateProps, dispatchProps, ownProps
 function bindOptionToSite( option, site ) {
 	return Object.assign(
