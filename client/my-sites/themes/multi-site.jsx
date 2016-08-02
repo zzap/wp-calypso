@@ -37,7 +37,7 @@ export default props => (
 		return 'info';
 	} }
 	sourcePath="/design">
-		<ThemeShowcase { ...props }>
+		<ThemeShowcase { ...props } source="showcase">
 			<SidebarNavigation />
 		</ThemeShowcase>
 	</ThemesSiteSelectorModal>

@@ -134,5 +134,6 @@ export default props => (
 		secondaryOption="tryandcustomize"
 		getScreenshotOption={ function( theme ) {
 			return theme.active ? 'customize' : 'info';
-		} } />
+		} }
+		source="showcase"/>
 );

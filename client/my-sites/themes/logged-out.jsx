@@ -29,5 +29,6 @@ export default props => (
 	defaultOption="signup"
 	getScreenshotOption={ function() {
 		return 'info';
-	} } />
+	} }
+	source="showcase" />
 );

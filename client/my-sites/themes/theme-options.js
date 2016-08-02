@@ -127,9 +127,9 @@ export function bindOptionToDispatch( option, source ) {
 	);
 }
 
-export function bindOptionsToDispatch( source ) {
-	return ( dispatch, ownProps ) => mapValues( ownProps.options, option => bindOptionToDispatch( option, source )( dispatch ) );
-}
+export const bindOptionsToDispatch = ( dispatch, { options, source } ) => (
+	mapValues( options, option => bindOptionToDispatch( option, source )( dispatch ) )
+);
 
 function bindOptionToState( option, state ) {
 	return Object.assign(
