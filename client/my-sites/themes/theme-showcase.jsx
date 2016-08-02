@@ -172,7 +172,7 @@ const ThemeShowcase = React.createClass( {
 	}
 } );
 
-const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
+export const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
 	const options = merge(
 		{},
 		stateProps.options,

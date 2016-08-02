@@ -6,7 +6,6 @@ import classNames from 'classnames';
 import { connect } from 'react-redux';
 import map from 'lodash/map';
 import pickBy from 'lodash/pickBy';
-import omit from 'lodash/omit';
 
 /**
  * Internal dependencies
@@ -17,14 +16,14 @@ import {
 	customize,
 	info,
 	support,
+	bindOptionsToSite,
 	bindOptionsToState,
 	bindOptionsToDispatch
 } from '../theme-options';
 import { trackClick } from '../helpers';
-import { isJetpackSite } from 'state/sites/selectors';
-import { canCurrentUser } from 'state/current-user/selectors';
 import { getCurrentTheme } from 'state/themes/current-theme/selectors';
 import QueryCurrentTheme from 'components/data/query-current-theme';
+import { mergeProps } from '../theme-showcase';
 
 /**
  * Show current active theme for a site, with
@@ -43,8 +42,6 @@ const CurrentTheme = React.createClass( {
 			PropTypes.bool
 		] ).isRequired,
 		// connected props
-		isCustomizable: PropTypes.bool.isRequired,
-		isJetpack: PropTypes.bool.isRequired,
 		currentTheme: PropTypes.object
 	},
 
@@ -70,75 +67,56 @@ const CurrentTheme = React.createClass( {
 					'current-theme__actions',
 					{ 'two-buttons': Object.keys( this.props.options ).length === 2 }
 					) } >
-					{ map( this.props.options, ( option, name ) => (
-						<CurrentThemeButton
+					{ map( this.props.options, ( option, name ) => {
+						console.log( 'geturl', name, option.getUrl );
+						return (
+						<CurrentThemeButton name={ name }
 							key={ name }
-							name={ name }
 							label={ option.label }
 							icon={ option.icon }
 							href={ currentTheme && option.getUrl( currentTheme ) }
 							onClick={ this.trackClick } />
-					) ) }
+						);
+					} ) }
 				</div>
 			</Card>
 		);
 	}
 } );
 
-const myOptions = {
-	customize,
-	info,
-	support
-};
+const bindToTheme = ( state, { site, options } ) => {
+	const currentTheme = site && getCurrentTheme( state, site.ID );
+	// FIXME (ockham): Remove this ugly hack. Currently required since the endpoint doesn't return an `active` attr
+	const theme = Object.assign( {}, currentTheme, { active: true } );
 
-const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
-	const options = Object.assign(
-		{},
-		stateProps.options,
-		dispatchProps,
-	);
-
-	console.log( 'mergeProps', omit( stateProps, 'options' ), { options }, Object.assign(
-		{},
-		ownProps,
-		omit( stateProps, 'options' ),
-		{
-			options
-		}
-	) );
-
-	return Object.assign(
-		{},
-		ownProps,
-		omit( stateProps, 'options' ),
-		{
-			options
-		}
-	);
-};
-
-export default connect(
-	( state, props ) => {
-		const { site: selectedSite } = props;
-		const currentTheme = selectedSite && getCurrentTheme( state, selectedSite.ID );
-		const theme = Object.assign( {}, currentTheme, { active: true } );
-
-		const options = bindOptionsToState( myOptions, state );
-		//const boundOptions = bindOptionsToSite( options, selectedSite );
-
-		const filteredOptions = pickBy( options, option => ! option.hideForSite &&
+	return {
+		currentTheme,
+		options: pickBy( options, option =>
+			! ( option.hideForSite && option.hideForSite() ) &&
 			! ( option.hideForTheme && option.hideForTheme( theme ) )
-		);
+		)
+	};
+};
 
-		console.log( 'options et al', options, filteredOptions );
+const ConnectedCurrentTheme = connect(
+	( state, ownProps ) => {
+		const { options, site: selectedSite } = ownProps;
+		const siteBoundOptions = bindOptionsToSite( options, selectedSite );
+		const stateBoundOptions = bindOptionsToState( siteBoundOptions, state );
 
 		return {
-			isJetpack: selectedSite && isJetpackSite( state, selectedSite.ID ),
-			isCustomizable: selectedSite && canCurrentUser( state, selectedSite.ID, 'edit_theme_options' ),
-			currentTheme,
-			options: filteredOptions
+			options: stateBoundOptions
 		};
 	},
-	bindOptionsToDispatch( myOptions, 'current theme' ),
+	bindOptionsToDispatch( 'current theme' ),
 	mergeProps
-)( CurrentTheme );
+)( connect( bindToTheme )( CurrentTheme ) );
+
+export default props => (
+	<ConnectedCurrentTheme { ...props }
+	options={ {
+		customize,
+		info,
+		support
+	} } />
+);
