@@ -26,7 +26,7 @@ import {
 	info,
 	support,
 	help,
-	bindOptionsToSite
+	bindToSite
 } from './theme-options';
 import sitesFactory from 'lib/sites-list';
 import { FEATURE_ADVANCED_DESIGN } from 'lib/plans/constants';
@@ -114,10 +114,6 @@ const bindSingleSite = ( state ) => {
 };
 
 const ThemesSingleSite = connect( bindSingleSite )( localize( ThemesSingleSiteBase ) );
-
-const bindToSite = ( state, { options } ) => ( {
-	options: bindOptionsToSite( options, getSelectedSite( state ) )
-} );
 
 const ThemeShowcaseBoundToSite = connect( bindToSite )( ThemesSingleSite );
 

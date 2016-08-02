@@ -16,7 +16,7 @@ import {
 	customize,
 	info,
 	support,
-	bindOptionsToSite,
+	bindToSite,
 	bindOptionsToState,
 	bindOptionsToDispatch
 } from '../theme-options';
@@ -68,7 +68,6 @@ const CurrentTheme = React.createClass( {
 					{ 'two-buttons': Object.keys( this.props.options ).length === 2 }
 					) } >
 					{ map( this.props.options, ( option, name ) => {
-						console.log( 'geturl', name, option.getUrl );
 						return (
 						<CurrentThemeButton name={ name }
 							key={ name }
@@ -98,19 +97,13 @@ const bindToTheme = ( state, { site, options } ) => {
 	};
 };
 
-const ConnectedCurrentTheme = connect(
-	( state, ownProps ) => {
-		const { options, site: selectedSite } = ownProps;
-		const siteBoundOptions = bindOptionsToSite( options, selectedSite );
-		const stateBoundOptions = bindOptionsToState( siteBoundOptions, state );
-
-		return {
-			options: stateBoundOptions
-		};
-	},
+const ConnectedCurrentTheme = connect( bindToSite )( connect(
+	( state, { options } ) => ( {
+		options: bindOptionsToState( options, state )
+	} ),
 	bindOptionsToDispatch( 'current theme' ),
 	mergeProps
-)( connect( bindToTheme )( CurrentTheme ) );
+)( connect( bindToTheme )( CurrentTheme ) ) );
 
 export default props => (
 	<ConnectedCurrentTheme { ...props }

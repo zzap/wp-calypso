@@ -27,6 +27,7 @@ import {
 } from 'state/themes/themes/selectors';
 import { isJetpackSite } from 'state/sites/selectors';
 import { canCurrentUser } from 'state/current-user/selectors';
+import { getSelectedSite } from 'state/ui/selectors';
 
 export const purchase = config.isEnabled( 'upgrades/checkout' )
 	? {
@@ -168,3 +169,7 @@ function bindOptionToSite( option, site ) {
 export function bindOptionsToSite( options, site ) {
 	return mapValues( options, option => bindOptionToSite( option, site ) );
 }
+
+export const bindToSite = ( state, { options } ) => ( {
+	options: bindOptionsToSite( options, getSelectedSite( state ) )
+} );
