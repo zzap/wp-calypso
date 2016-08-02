@@ -16,7 +16,7 @@ import PageViewTracker from 'lib/analytics/page-view-tracker';
 import { getQueryParams, getThemesList } from 'state/themes/themes-list/selectors';
 import { addTracking } from './helpers';
 import DocumentHead from 'components/data/document-head';
-import { bindOptionsToState, bindOptionsToDispatch, mergeProps } from './theme-options';
+import { bindOptions } from './theme-options';
 
 const themesMeta = {
 	'': {
@@ -172,11 +172,8 @@ const ThemeShowcase = React.createClass( {
 } );
 
 export default connect(
-	( state, { options } ) => ( {
+	state => ( {
 		queryParams: getQueryParams( state ),
 		themesList: getThemesList( state ),
-		options: bindOptionsToState( options, state )
-	} ),
-	bindOptionsToDispatch,
-	mergeProps
-)( localize( ThemeShowcase ) );
+	} )
+)( connect( ...bindOptions )( localize( ThemeShowcase ) ) );
