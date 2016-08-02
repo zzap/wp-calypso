@@ -18,12 +18,12 @@ import {
 	support,
 	bindToSite,
 	bindToState,
-	bindOptionsToDispatch
+	bindOptionsToDispatch,
+	mergeProps
 } from '../theme-options';
 import { trackClick } from '../helpers';
 import { getCurrentTheme } from 'state/themes/current-theme/selectors';
 import QueryCurrentTheme from 'components/data/query-current-theme';
-import { mergeProps } from '../theme-showcase';
 
 /**
  * Show current active theme for a site, with

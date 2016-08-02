@@ -6,6 +6,7 @@
 import { bindActionCreators } from 'redux';
 import i18n from 'i18n-calypso';
 import mapValues from 'lodash/mapValues';
+import merge from 'lodash/merge';
 
 /**
  * Internal dependencies
@@ -177,3 +178,26 @@ export function bindOptionsToSite( options, site ) {
 export const bindToSite = ( state, { options } ) => ( {
 	options: bindOptionsToSite( options, getSelectedSite( state ) )
 } );
+
+export const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
+	const options = merge(
+		{},
+		stateProps.options,
+		dispatchProps
+	);
+
+	return Object.assign(
+		{},
+		ownProps,
+		stateProps,
+		{
+			options,
+			defaultOption: options[ ownProps.defaultOption ],
+			secondaryOption: options[ ownProps.secondaryOption ],
+			getScreenshotOption: function( theme ) {
+				const screenshotOption = ownProps.getScreenshotOption( theme );
+				return options[ screenshotOption ];
+			}
+		}
+	);
+};
