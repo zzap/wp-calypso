@@ -201,3 +201,9 @@ export const mergeProps = ( stateProps, dispatchProps, ownProps ) => {
 		}
 	);
 };
+
+export const bindOptions = [
+	bindToState,
+	bindOptionsToDispatch,
+	mergeProps
+];

@@ -17,9 +17,7 @@ import {
 	info,
 	support,
 	bindToSite,
-	bindToState,
-	bindOptionsToDispatch,
-	mergeProps
+	bindOptions
 } from '../theme-options';
 import { trackClick } from '../helpers';
 import { getCurrentTheme } from 'state/themes/current-theme/selectors';
@@ -97,11 +95,7 @@ const bindToTheme = ( state, { site, options } ) => {
 	};
 };
 
-const ConnectedCurrentTheme = connect( bindToSite )( connect(
-	bindToState,
-	bindOptionsToDispatch,
-	mergeProps
-)( connect( bindToTheme )( CurrentTheme ) ) );
+const ConnectedCurrentTheme = connect( bindToSite )( connect( ...bindOptions )( connect( bindToTheme )( CurrentTheme ) ) );
 
 export default props => (
 	<ConnectedCurrentTheme { ...props }
