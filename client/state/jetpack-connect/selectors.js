@@ -14,9 +14,6 @@ const isCalypsoStartedConnection = function( state, siteSlug ) {
 };
 
 const getFlowType = function( state, site ) {
-	if ( ! site ) {
-		return false;
-	}
 	const siteSlug = site.slug.replace( /.*?:\/\//g, '' );
 	if ( state && state[ siteSlug ] ) {
 		return state[ siteSlug ].flowType;
