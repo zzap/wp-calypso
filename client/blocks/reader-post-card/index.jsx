@@ -2,7 +2,7 @@
  * External Dependencies
  */
 import React from 'react';
-import { partial, noop, truncate } from 'lodash';
+import { partial, noop, truncate, head, filter, startsWith, get } from 'lodash';
 import classnames from 'classnames';
 
 /**
@@ -26,6 +26,43 @@ function FeaturedImage( { image, href } ) {
 		} } ></a> );
 }
 
+class FeaturedVideo extends React.Component {
+
+	constructor() {
+		super();
+		this.state = {
+			preferThumbnail: true
+		};
+	}
+
+	handleThumbnailClick = () => {
+		this.setState( { preferThumbnail: false } );
+	}
+
+	render() {
+		const { thumbnailUrl, autoplayIframe, iframe } = this.props;
+		const preferThumbnail = this.state.preferThumbnail;
+
+		if ( preferThumbnail && thumbnailUrl ) {
+			return (
+				<div className="reader-post-card__featured-image"
+					key="featuredVideo"
+					onClick={ this.handleThumbnailClick }
+				>
+					<div className="reader-post-card__play-icon-container">
+						<img src={ thumbnailUrl } className="reader__post-featured-video-thumbnail" />
+						<img className="reader-post-card__play-icon" src="/calypso/images/reader/play-icon.png" />
+					</div>
+				</div>   //eslint-disable-line react/no-danger
+			);
+		}
+
+		return (
+			<div dangerouslySetInnerHTML={ { __html: thumbnailUrl ? autoplayIframe : iframe } } />   //eslint-disable-line react/no-danger
+		);
+	}
+}
+
 function PostByline( { post } ) {
 	return (
 		<div className="reader-post-card__meta ignore-click">
@@ -43,14 +80,30 @@ function PostByline( { post } ) {
 }
 
 export function RefreshPostCard( { post, site, feed, onClick = noop, onCommentClick = noop } ) {
+	const featuredEmbed = head( filter( post.content_embeds, ( embed ) => {
+		return ! startsWith( embed.type, 'special-' );
+	} ) ); //TODO what the heck is this doing?
+
+
 	const featuredImage = post.canonical_image;
 	const isPhotoOnly = post.display_type & DisplayTypes.PHOTO_ONLY;
 	const title = truncate( post.title, {
 		length: isPhotoOnly ? 50 : 140,
 		separator: /,? +/
 	} );
+
+	// we only show a featured embed when all of these are true
+	//   - there is no featured image on the post that's big enough to pass as the canonical image
+	//   - there is an available embed
+	//
+	const	useFeaturedEmbed = featuredEmbed &&
+		( ! featuredImage || ( featuredImage !== post.featured_image && featuredImage !== get( post, 'post_thumbnail.URL' ) ) );
+
+	const featuredAsset = useFeaturedEmbed ? <FeaturedVideo { ...featuredEmbed }/> :
+												featuredImage ? <FeaturedImage image={ featuredImage } href={ post.URL } /> : null;
+
 	const classes = classnames( 'reader-post-card', {
-		'has-thumbnail': !! featuredImage,
+		'has-thumbnail': !! featuredImage || ( useFeaturedEmbed && get( featuredEmbed, 'thumbnailUrl' ) ),
 		'is-photo': isPhotoOnly
 	} );
 
@@ -58,7 +111,7 @@ export function RefreshPostCard( { post, site, feed, onClick = noop, onCommentCl
 		<Card className={ classes } onClick={ partial( onClick, { post, site, feed } ) }>
 			<PostByline post={ post } site={ site } feed={ feed } />
 			<div className="reader-post-card__post">
-				{ featuredImage && <FeaturedImage image={ featuredImage } href={ post.URL } /> }
+				{ featuredAsset }
 				<div className="reader-post-card__post-details">
 					<h1 className="reader-post-card__title">
 						<a className="reader-post-card__title-link" href={ post.URL }>{ title }</a>

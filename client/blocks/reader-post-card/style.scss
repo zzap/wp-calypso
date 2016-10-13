@@ -261,6 +261,20 @@ $reader-post-card-breakpoint-small: "( max-width: 550px )";
 	}
 }
 
+
+.reader-post-card__play-icon-container {
+	position: relative;
+}
+
+.reader-post-card__play-icon {
+	margin: auto;
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+}
+
 .reader-post-card__share .reader-share__button-label,
 .reader-post-card__comments .comment-button__label-status,
 .reader-post-card__likes .like-button__label-status {
