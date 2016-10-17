@@ -1,11 +1,10 @@
 /** @ssr-ready **/
-
 /**
  * Internal dependencies
  */
 import config from 'config';
 import { getSiteSlug, getSiteOption, isJetpackSite } from 'state/sites/selectors';
-import { isPremium, oldShowcaseUrl } from 'my-sites/themes/helpers';
+import { isPremiumTheme, oldShowcaseUrl } from './utils';
 
 export function getThemes( state ) {
 	return state.themes.themes.get( 'themes' ).toJS();
@@ -98,7 +97,7 @@ export function getThemeSignupUrl( state, theme ) {
 
 	let url = '/start/with-theme?ref=calypshowcase&theme=' + theme.id;
 
-	if ( isPremium( theme ) ) {
+	if ( isPremiumTheme( theme ) ) {
 		url += '&premium=true';
 	}
 

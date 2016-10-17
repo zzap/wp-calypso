@@ -16,8 +16,8 @@ import {
 	activate as activateAction
 } from 'state/themes/actions';
 import {
-	isPremium
-} from './helpers';
+	isPremiumTheme as isPremium
+} from 'state/themes/themes/utils';
 import {
 	getThemeSignupUrl as getSignupUrl,
 	getThemePurchaseUrl as getPurchaseUrl,
