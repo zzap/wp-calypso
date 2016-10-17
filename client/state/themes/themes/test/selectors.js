@@ -244,6 +244,11 @@ describe( 'themes selectors', () => {
 	} );
 
 	describe( '#getThemeCustomizeUrl', () => {
+		it( 'given no theme and no site ID, should return the correct customize URL', () => {
+			const customizeUrl = getThemeCustomizeUrl( {} );
+			expect( customizeUrl ).to.equal( '/customize/' );
+		} );
+
 		it( 'given a theme and no site ID, should return the correct customize URL', () => {
 			const customizeUrl = getThemeCustomizeUrl(
 				{},

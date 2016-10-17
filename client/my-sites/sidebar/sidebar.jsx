@@ -15,7 +15,7 @@ import { connect } from 'react-redux';
  */
 var config = require( 'config' ),
 	CurrentSite = require( 'my-sites/current-site' ),
-	getCustomizeUrl = require( '../themes/helpers' ).getCustomizeUrl,
+	getCustomizeUrl = require( 'state/themes/themes/selectors' ).getThemeCustomizeUrl,
 	Gridicon = require( 'components/gridicon' ),
 	productsValues = require( 'lib/products-values' ),
 	PublishMenu = require( './publish-menu' ),
@@ -198,7 +198,7 @@ export const MySitesSidebar = React.createClass( {
 				icon="themes"
 				preloadSectionName="themes"
 			>
-				<SidebarButton href={ getCustomizeUrl( null, site ) } preloadSectionName="customize">
+				<SidebarButton href={ this.props.getCustomizeUrl( site.ID ) } preloadSectionName="customize">
 					{ this.translate( 'Customize' ) }
 				</SidebarButton>
 			</SidebarItem>
@@ -762,6 +762,7 @@ export const MySitesSidebar = React.createClass( {
 function mapStateToProps( state ) {
 	return {
 		currentUser: getCurrentUser( state ),
+		getCustomizeUrl: getCustomizeUrl.bind( null, state, null )
 	};
 }
 

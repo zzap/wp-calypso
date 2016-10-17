@@ -72,10 +72,6 @@ export function getThemePurchaseUrl( state, theme, siteId ) {
 }
 
 export function getThemeCustomizeUrl( state, theme, siteId ) {
-	if ( ! theme ) {
-		return null;
-	}
-
 	if ( ! siteId ) {
 		return '/customize/';
 	}
