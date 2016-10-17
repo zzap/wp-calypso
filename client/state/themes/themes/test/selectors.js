@@ -26,10 +26,26 @@ describe( 'themes selectors', () => {
 	} );
 
 	describe( '#getThemeSignupUrl', () => {
-		it( 'should return the signup URL with a free theme picked', () => {
-			const signupUrl = getThemeSignupUrl( {}, { id: 'twentysixteen' } );
+		context( 'with a free theme', () => {
+			it( 'should return the correct signup URL', () => {
+				const signupUrl = getThemeSignupUrl( {}, {
+					id: 'twentysixteen',
+					stylesheet: 'pub/twentysixteen'
+				} );
 
-			expect( signupUrl ).to.equal( '/start/with-theme?ref=calypshowcase&theme=twentysixteen' );
+				expect( signupUrl ).to.equal( '/start/with-theme?ref=calypshowcase&theme=twentysixteen' );
+			} );
+		} );
+
+		context( 'with a premium theme', () => {
+			it( 'should return the correct signup URL', () => {
+				const signupUrl = getThemeSignupUrl( {}, {
+					id: 'mood',
+					stylesheet: 'premium/mood'
+				} );
+
+				expect( signupUrl ).to.equal( '/start/with-theme?ref=calypshowcase&theme=mood&premium=true' );
+			} );
 		} );
 	} );
 } );
