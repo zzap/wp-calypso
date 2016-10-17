@@ -52,7 +52,7 @@ const CurrentTheme = React.createClass( {
 
 		return (
 			<Card className="current-theme">
-				{ site && <QueryCurrentTheme siteId={ site.ID }/> }
+				{ site && <QueryCurrentTheme siteId={ site.ID } /> }
 				<div className="current-theme__current">
 					<span className="current-theme__label">
 						{ this.translate( 'Current Theme' ) }
@@ -65,16 +65,14 @@ const CurrentTheme = React.createClass( {
 					'current-theme__actions',
 					{ 'two-buttons': Object.keys( this.props.options ).length === 2 }
 					) } >
-					{ map( this.props.options, ( option, name ) => {
-						return (
+					{ map( this.props.options, ( option, name ) => (
 						<CurrentThemeButton name={ name }
 							key={ name }
 							label={ option.label }
 							icon={ option.icon }
 							href={ currentTheme && option.getUrl( currentTheme ) }
 							onClick={ this.trackClick } />
-						);
-					} ) }
+					) ) }
 				</div>
 			</Card>
 		);
