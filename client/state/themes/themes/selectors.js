@@ -64,6 +64,10 @@ export function getThemeHelpUrl( state, theme, siteId ) {
 }
 
 export function getThemePurchaseUrl( state, theme, siteId ) {
+	if ( ! isPremiumTheme( theme ) ) {
+		return null;
+	}
+
 	return `/checkout/${ getSiteSlug( state, siteId ) }/theme:${ theme.id }`;
 }
 

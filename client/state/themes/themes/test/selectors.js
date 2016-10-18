@@ -85,91 +85,115 @@ describe( 'themes selectors', () => {
 	} );
 
 	describe( '#getThemeSupportUrl', () => {
-		it( 'given a premium theme and no site ID, should return the support URL', () => {
-			const supportUrl = getThemeSupportUrl(
-				{
-					sites: {
-						items: {
-							2916284: {
-								ID: 2916284,
-								URL: 'https://example.wordpress.com'
-							}
-						}
-					}
-				},
-				{
-					id: 'mood',
-					stylesheet: 'premium/mood'
-				}
-			);
-			expect( supportUrl ).to.equal( '/theme/mood/setup' );
-		} );
-
-		it( 'given a premium theme and wpcom site ID, should return the support URL', () => {
-			const supportUrl = getThemeSupportUrl(
-				{
-					sites: {
-						items: {
-							2916284: {
-								ID: 2916284,
-								URL: 'https://example.wordpress.com'
-							}
-						}
-					}
-				},
-				{
-					id: 'mood',
-					stylesheet: 'premium/mood'
-				},
-				2916284
-			);
-			expect( supportUrl ).to.equal( '/theme/mood/setup/example.wordpress.com' );
-		} );
-
-		it( 'given a free theme and a wpcom site ID, should return null', () => {
-			const supportUrl = getThemeSupportUrl(
-				{
-					sites: {
-						items: {
-							2916284: {
-								ID: 2916284,
-								URL: 'https://example.wordpress.com'
-							}
-						}
-					}
-				},
-				{
-					id: 'twentysixteen',
-					stylesheet: 'pub/twentysixteen'
-				},
-				2916284
-			);
-			expect( supportUrl ).to.be.null;
-		} );
-
-		it( 'given a free theme and Jetpack site ID, should return null', () => {
-			const supportUrl = getThemeSupportUrl(
-				{
-					sites: {
-						items: {
-							77203074: {
-								ID: 77203074,
-								URL: 'https://example.net',
-								jetpack: true,
-								options: {
-									admin_url: 'https://example.net/wp-admin/'
+		context( 'for a premium theme', () => {
+			it( 'given no site ID, should return the support URL', () => {
+				const supportUrl = getThemeSupportUrl(
+					{
+						sites: {
+							items: {
+								2916284: {
+									ID: 2916284,
+									URL: 'https://example.wordpress.com'
 								}
 							}
 						}
+					},
+					{
+						id: 'mood',
+						stylesheet: 'premium/mood'
 					}
-				},
-				{
-					id: 'twentysixteen',
-					stylesheet: 'pub/twentysixteen'
-				},
-				77203074
-			);
-			expect( supportUrl ).to.be.null;
+				);
+				expect( supportUrl ).to.equal( '/theme/mood/setup' );
+			} );
+
+			it( 'given a wpcom site ID, should return the support URL', () => {
+				const supportUrl = getThemeSupportUrl(
+					{
+						sites: {
+							items: {
+								2916284: {
+									ID: 2916284,
+									URL: 'https://example.wordpress.com'
+								}
+							}
+						}
+					},
+					{
+						id: 'mood',
+						stylesheet: 'premium/mood'
+					},
+					2916284
+				);
+				expect( supportUrl ).to.equal( '/theme/mood/setup/example.wordpress.com' );
+			} );
+		} );
+
+		context( 'for a free theme', () => {
+			it( 'given no site ID, should return null', () => {
+				const supportUrl = getThemeSupportUrl(
+					{
+						sites: {
+							items: {
+								2916284: {
+									ID: 2916284,
+									URL: 'https://example.wordpress.com'
+								}
+							}
+						}
+					},
+					{
+						id: 'twentysixteen',
+						stylesheet: 'pub/twentysixteen'
+					}
+				);
+				expect( supportUrl ).to.be.null;
+			} );
+
+			it( 'given a wpcom site ID, should return null', () => {
+				const supportUrl = getThemeSupportUrl(
+					{
+						sites: {
+							items: {
+								2916284: {
+									ID: 2916284,
+									URL: 'https://example.wordpress.com'
+								}
+							}
+						}
+					},
+					{
+						id: 'twentysixteen',
+						stylesheet: 'pub/twentysixteen'
+					},
+					2916284
+				);
+				expect( supportUrl ).to.be.null;
+			} );
+
+			it( 'given a Jetpack site ID, should return null', () => {
+				const supportUrl = getThemeSupportUrl(
+					{
+						sites: {
+							items: {
+								77203074: {
+									ID: 77203074,
+									URL: 'https://example.net',
+									jetpack: true,
+									options: {
+										admin_url: 'https://example.net/wp-admin/'
+									}
+								}
+							}
+						}
+					},
+					{
+						id: 'twentysixteen',
+						stylesheet: 'pub/twentysixteen'
+					},
+					77203074
+				);
+				expect( supportUrl ).to.be.null;
+			} );
 		} );
 	} );
 
@@ -242,7 +266,28 @@ describe( 'themes selectors', () => {
 	} );
 
 	describe( '#getPurchaseUrl', () => {
-		it( 'given a theme and a wpcom site ID, should return the purchase URL', () => {
+		it( 'given a free theme and a wpcom site ID, should return null', () => {
+			const purchaseUrl = getThemePurchaseUrl(
+				{
+					sites: {
+						items: {
+							2916284: {
+								ID: 2916284,
+								URL: 'https://example.wordpress.com'
+							}
+						}
+					}
+				},
+				{
+					id: 'twentysixteen',
+					stylesheet: 'pub/twentysixteen'
+				},
+				2916284
+			);
+			expect( purchaseUrl ).to.be.null;
+		} );
+
+		it( 'given a premium theme and a wpcom site ID, should return the purchase URL', () => {
 			const purchaseUrl = getThemePurchaseUrl(
 				{
 					sites: {
