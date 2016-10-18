@@ -33,12 +33,8 @@ export function getThemeDetailsUrl( state, theme, siteId ) {
 }
 
 export function getThemeSupportUrl( state, theme, siteId ) {
-	if ( ! theme ) {
+	if ( ! theme || ! isPremiumTheme( theme ) ) {
 		return null;
-	}
-
-	if ( isJetpackSite( state, siteId ) ) {
-		return '//wordpress.org/support/theme/' + theme.id;
 	}
 
 	const sitePart = siteId ? `/${ getSiteSlug( state, siteId ) }` : '';
@@ -56,7 +52,7 @@ export function getThemeHelpUrl( state, theme, siteId ) {
 	}
 
 	if ( isJetpackSite( state, siteId ) ) {
-		return getThemeSupportUrl( state, theme, siteId );
+		return '//wordpress.org/support/theme/' + theme.id;
 	}
 
 	let baseUrl = oldShowcaseUrl + theme.id;

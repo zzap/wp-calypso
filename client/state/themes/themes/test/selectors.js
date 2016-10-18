@@ -85,7 +85,7 @@ describe( 'themes selectors', () => {
 	} );
 
 	describe( '#getThemeSupportUrl', () => {
-		it( 'given a theme and no site ID, should return the support URL', () => {
+		it( 'given a premium theme and no site ID, should return the support URL', () => {
 			const supportUrl = getThemeSupportUrl(
 				{
 					sites: {
@@ -105,7 +105,7 @@ describe( 'themes selectors', () => {
 			expect( supportUrl ).to.equal( '/theme/mood/setup' );
 		} );
 
-		it( 'given a theme and wpcom site ID, should return the support URL', () => {
+		it( 'given a premium theme and wpcom site ID, should return the support URL', () => {
 			const supportUrl = getThemeSupportUrl(
 				{
 					sites: {
@@ -126,7 +126,28 @@ describe( 'themes selectors', () => {
 			expect( supportUrl ).to.equal( '/theme/mood/setup/example.wordpress.com' );
 		} );
 
-		it( 'given a theme and Jetpack site ID, should return the support URL', () => {
+		it( 'given a free theme and a wpcom site ID, should return null', () => {
+			const supportUrl = getThemeSupportUrl(
+				{
+					sites: {
+						items: {
+							2916284: {
+								ID: 2916284,
+								URL: 'https://example.wordpress.com'
+							}
+						}
+					}
+				},
+				{
+					id: 'twentysixteen',
+					stylesheet: 'pub/twentysixteen'
+				},
+				2916284
+			);
+			expect( supportUrl ).to.be.null;
+		} );
+
+		it( 'given a free theme and Jetpack site ID, should return null', () => {
 			const supportUrl = getThemeSupportUrl(
 				{
 					sites: {
@@ -148,7 +169,7 @@ describe( 'themes selectors', () => {
 				},
 				77203074
 			);
-			expect( supportUrl ).to.equal( '//wordpress.org/support/theme/twentysixteen' );
+			expect( supportUrl ).to.be.null;
 		} );
 	} );
 
