@@ -61,13 +61,13 @@ const ThanksModal = React.createClass( {
 		const features = this.translate( "Discover this theme's {{a}}awesome features.{{/a}}", {
 			components: {
 				a: <a href={ this.props.detailsUrl }
-					onClick={ this.onLinkClick( 'features' ) }/>
+					onClick={ this.onLinkClick( 'features' ) } />
 			}
 		} );
 		const customize = this.translate( '{{a}}Customize{{/a}} this design.', {
 			components: {
 				a: <a href={ this.props.customizeUrl }
-					onClick={ this.onLinkClick( 'customize' ) }/>
+					onClick={ this.onLinkClick( 'customize' ) } />
 			}
 		} );
 		return (
@@ -79,7 +79,7 @@ const ThanksModal = React.createClass( {
 				{ this.translate( 'Have questions? Stop by our {{a}}support forums.{{/a}}', {
 					components: {
 						a: <a href={ getForumUrl( this.props.currentTheme ) }
-							onClick={ this.onLinkClick( 'support' ) }/>
+							onClick={ this.onLinkClick( 'support' ) } />
 					}
 				} ) }
 			</li>
@@ -94,7 +94,7 @@ const ThanksModal = React.createClass( {
 					{ this.translate( 'Learn more about this {{a}}awesome theme{{/a}}.', {
 						components: {
 							a: <a href={ themeUri }
-								onClick={ this.onLinkClick( 'org theme' ) }/>
+								onClick={ this.onLinkClick( 'org theme' ) } />
 						}
 					} ) }
 				</li>
@@ -109,7 +109,7 @@ const ThanksModal = React.createClass( {
 					{ this.translate( 'Have questions? {{a}}Contact the theme author.{{/a}}', {
 						components: {
 							a: <a href={ authorUri }
-								onClick={ this.onLinkClick( 'org author' ) }/>
+								onClick={ this.onLinkClick( 'org author' ) } />
 						}
 					} ) }
 				</li>
@@ -123,7 +123,7 @@ const ThanksModal = React.createClass( {
 				{ this.translate( 'If you need support, visit the WordPress.org {{a}}Themes forum{{/a}}.', {
 					components: {
 						a: <a href="https://wordpress.org/support/forum/themes-and-templates"
-							onClick={ this.onLinkClick( 'org forum' ) }/>
+							onClick={ this.onLinkClick( 'org forum' ) } />
 					}
 				} ) }
 			</li>
