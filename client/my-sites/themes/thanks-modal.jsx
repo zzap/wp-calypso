@@ -10,8 +10,8 @@ import page from 'page';
  */
 import Dialog from 'components/dialog';
 import PulsingDot from 'components/pulsing-dot';
-import { getCustomizeUrl, getForumUrl, trackClick } from './helpers';
-import { getThemeDetailsUrl } from 'state/themes/themes/selectors';
+import { getForumUrl, trackClick } from './helpers';
+import { getThemeDetailsUrl, getThemeCustomizeUrl } from 'state/themes/themes/selectors';
 import {
 	isActivating,
 	hasActivated,
@@ -66,7 +66,7 @@ const ThanksModal = React.createClass( {
 		} );
 		const customize = this.translate( '{{a}}Customize{{/a}} this design.', {
 			components: {
-				a: <a href={ getCustomizeUrl( this.props.currentTheme, this.props.site ) }
+				a: <a href={ this.props.customizeUrl }
 					onClick={ this.onLinkClick( 'customize' ) }/>
 			}
 		} );
@@ -197,6 +197,7 @@ export default connect(
 		return {
 			currentTheme,
 			detailsUrl: props.site && getThemeDetailsUrl( state, currentTheme, props.site.ID ),
+			customizeUrl: props.site && getThemeCustomizeUrl( state, currentTheme, props.site.ID ),
 			isActivating: isActivating( state ),
 			hasActivated: hasActivated( state ),
 		};
