@@ -12,7 +12,7 @@ import mapValues from 'lodash/mapValues';
  */
 import config from 'config';
 import route from 'lib/route';
-import { oldShowcaseUrl, isPremiumTheme as isPremium } from 'state/themes/themes/selectors';
+import { oldShowcaseUrl, isPremiumTheme as isPremium } from 'state/themes/themes/utils';
 
 export function getPreviewUrl( theme, site ) {
 	if ( site && site.jetpack ) {
