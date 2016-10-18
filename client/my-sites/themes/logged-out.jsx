@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React from 'react';
+import { connect } from 'react-redux';
 
 /**
  * Internal dependencies
@@ -14,10 +15,13 @@ import {
 	info,
 	support,
 	help,
+	bindOptions
 } from './theme-options';
 
+const BoundThemeShowcase = connect( ...bindOptions )( ThemeShowcase );
+
 export default props => (
-	<ThemeShowcase { ...props }
+	<BoundThemeShowcase { ...props }
 	options={ {
 		signup,
 		preview,

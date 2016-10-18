@@ -16,7 +16,6 @@ import PageViewTracker from 'lib/analytics/page-view-tracker';
 import { getQueryParams, getThemesList } from 'state/themes/themes-list/selectors';
 import { addTracking } from './helpers';
 import DocumentHead from 'components/data/document-head';
-import { bindOptions } from './theme-options';
 
 const themesMeta = {
 	'': {
@@ -176,4 +175,4 @@ export default connect(
 		queryParams: getQueryParams( state ),
 		themesList: getThemesList( state ),
 	} )
-)( connect( ...bindOptions )( localize( ThemeShowcase ) ) );
+)( localize( ThemeShowcase ) );

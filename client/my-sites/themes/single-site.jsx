@@ -26,7 +26,8 @@ import {
 	info,
 	support,
 	help,
-	bindToSite
+	bindToSite,
+	bindOptions
 } from './theme-options';
 import sitesFactory from 'lib/sites-list';
 import { FEATURE_ADVANCED_DESIGN } from 'lib/plans/constants';
@@ -57,6 +58,8 @@ const JetpackThemeReferrerPage = localize(
 	)
 );
 
+const BoundThemeShowcase = connect( ...bindOptions )( ThemeShowcase );
+
 const ThemesSingleSiteBase = ( props ) => {
 	const site = sites.getSelectedSite(),
 		{ analyticsPath, analyticsPageTitle, isJetpack, translate } = props,
@@ -86,7 +89,7 @@ const ThemesSingleSiteBase = ( props ) => {
 	}
 
 	return (
-		<ThemeShowcase { ...props }>
+		<BoundThemeShowcase { ...props }>
 			<SidebarNavigation />
 			<ThanksModal
 				site={ site }
@@ -100,7 +103,7 @@ const ThemesSingleSiteBase = ( props ) => {
 				feature={ FEATURE_ADVANCED_DESIGN }
 				event="themes_custom_design"
 			/>
-		</ThemeShowcase>
+		</BoundThemeShowcase>
 	);
 };
 

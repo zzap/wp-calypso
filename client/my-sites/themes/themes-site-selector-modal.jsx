@@ -2,6 +2,7 @@
  * External dependencies
  */
 import React, { PropTypes } from 'react';
+import { connect } from 'react-redux';
 import page from 'page';
 import defer from 'lodash/defer';
 import omit from 'lodash/omit';
@@ -13,6 +14,7 @@ import mapValues from 'lodash/mapValues';
 import Theme from 'components/theme';
 import SiteSelectorModal from 'components/site-selector-modal';
 import { trackClick } from './helpers';
+import { bindOptions } from './theme-options';
 
 const ThemesSiteSelectorModal = React.createClass( {
 	propTypes: {
@@ -105,7 +107,7 @@ const ThemesSiteSelectorModal = React.createClass( {
 					mainAction={ this.trackAndCallAction }
 					mainActionLabel={ selectedOption.label }
 					getMainUrl={ selectedOption.getUrl ? function( site ) {
-						return selectedOption.getUrl( selectedTheme, site );
+						return selectedOption.getUrl( selectedTheme, site.ID );
 					} : null } >
 
 					<Theme isActionable={ false } theme={ selectedTheme } />
@@ -116,4 +118,4 @@ const ThemesSiteSelectorModal = React.createClass( {
 	}
 } );
 
-export default ThemesSiteSelectorModal;
+export default connect( ...bindOptions )( ThemesSiteSelectorModal );
