@@ -5,6 +5,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import viewport from 'lib/viewport';
 import { findDOMNode } from 'react-dom';
+import classnames from 'classnames';
 /**
  * Internal dependencies
  */
@@ -30,15 +31,19 @@ class HappychatPage extends Component {
 	}
 
 	render() {
-		const { connectionStatus } = this.props;
+		const { connectionStatus, isFullPage } = this.props;
 		return (
-			<div className="happychat__page">
+			<div className={ classnames( 'happychat__page', { 'is-fullpage': isFullPage } ) }>
 				{ timeline( { connectionStatus } ) }
 				{ composer( { connectionStatus } ) }
 			</div>
 		);
 	}
 }
+
+HappychatPage.defaultProps = {
+	isFullPage: true
+};
 
 const mapState = state => ( {
 	connectionStatus: getHappychatConnectionStatus( state )
