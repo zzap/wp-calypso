@@ -19,7 +19,7 @@ import { timeline, composer } from 'components/happychat/helpers';
 class HappychatPage extends Component {
 	componentDidMount() {
 		this.props.openChat();
-	},
+	}
 
 	onFocus() {
 		const composerNode = findDOMNode( this.refs.composer );
