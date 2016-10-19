@@ -3,12 +3,12 @@
  */
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import viewport from 'lib/viewport';
 import { findDOMNode } from 'react-dom';
 import classnames from 'classnames';
 /**
  * Internal dependencies
  */
+import viewport from 'lib/viewport';
 import { connectChat } from 'state/happychat/actions';
 import { getHappychatConnectionStatus } from 'state/happychat/selectors';
 import { timeline, composer } from 'components/happychat/helpers';
