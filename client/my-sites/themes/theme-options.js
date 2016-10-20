@@ -39,7 +39,7 @@ export const purchase = config.isEnabled( 'upgrades/checkout' )
 			context: 'verb',
 			comment: 'label for selecting a site for which to purchase a theme'
 		} ),
-		getUrl: ( theme, site ) => getPurchaseUrl( theme, site ),
+		getUrl: getPurchaseUrl,
 		hideForTheme: theme => ! theme.price || theme.active || theme.purchased
 	}
 	: {};
