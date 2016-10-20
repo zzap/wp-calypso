@@ -119,7 +119,7 @@ export function bindOptionToDispatch( option, source ) {
 	return dispatch => Object.assign(
 		{},
 		//option,
-		option.action && option.action.type
+		option.action
 			? { action: bindActionCreators(
 				( theme, site ) => option.action( theme, site, source ),
 				dispatch
