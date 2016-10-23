@@ -16,7 +16,6 @@ var StepWrapper = require( 'signup/step-wrapper' ),
 	SignupActions = require( 'lib/signup/actions' ),
 	MapDomainStep = require( 'components/domains/map-domain-step' ),
 	RegisterDomainStep = require( 'components/domains/register-domain-step' ),
-	GoogleApps = require( 'components/upgrades/google-apps' ),
 	Notice = require( 'components/notice' ),
 	{ getCurrentUser, currentUserHasFlag } = require( 'state/current-user/selectors' ),
 	{ DOMAINS_WITH_PLANS_ONLY } = require( 'state/current-user/constants' ),
@@ -27,10 +26,6 @@ const registerDomainAnalytics = analyticsMixin( 'registerDomain' ),
 	mapDomainAnalytics = analyticsMixin( 'mapDomain' );
 
 const DomainsStep = React.createClass( {
-	showGoogleApps: function() {
-		page( signupUtils.getStepUrl( this.props.flowName, this.props.stepName, 'google', this.props.locale ) );
-	},
-
 	showDomainSearch: function() {
 		page( signupUtils.getStepUrl( this.props.flowName, this.props.stepName, this.props.locale ) );
 	},
@@ -63,24 +58,9 @@ const DomainsStep = React.createClass( {
 
 		registerDomainAnalytics.recordEvent( 'addDomainButtonClick', suggestion.domain_name, 'signup' );
 
-		if ( this.props.step.suggestion &&
-			this.props.step.suggestion.domain_name !== suggestion.domain_name ) {
-			// overwrite the Google Apps data if the user goes back and selects a different domain
-			stepData.googleAppsForm = undefined;
-		}
-
 		SignupActions.saveSignupStep( stepData );
 
-		const isPurchasingItem = Boolean( suggestion.product_slug );
-
-		defer( () => {
-			// we must defer here because `submitWithDomain` also dispatches an action
-			if ( isPurchasingItem ) {
-				this.showGoogleApps();
-			} else {
-				this.submitWithDomain();
-			}
-		} );
+		this.submitWithDomain();
 	},
 
 	isPurchasingTheme: function() {
@@ -109,7 +89,7 @@ const DomainsStep = React.createClass( {
 		return `${repo}/${themeSlug}`;
 	},
 
-	submitWithDomain: function( googleAppsCartItem ) {
+	submitWithDomain: function() {
 		const suggestion = this.props.step.suggestion,
 			isPurchasingItem = Boolean( suggestion.product_slug ),
 			siteUrl = isPurchasingItem
@@ -126,7 +106,6 @@ const DomainsStep = React.createClass( {
 			processingMessage: this.translate( 'Adding your domain' ),
 			stepName: this.props.stepName,
 			domainItem,
-			googleAppsCartItem,
 			isPurchasingItem,
 			siteUrl,
 			stepSectionName: this.props.stepSectionName
@@ -160,22 +139,6 @@ const DomainsStep = React.createClass( {
 			stepSectionName: this.props.stepSectionName,
 			[ sectionName ]: state
 		} );
-	},
-
-	googleAppsForm: function() {
-		return (
-			<div className="domains-step__section-wrapper">
-				<GoogleApps
-					productsList={ productsList }
-					domain={ this.props.step.suggestion.domain_name }
-					onGoBack={ this.showDomainSearch }
-					onClickSkip={ this.submitWithDomain }
-					onAddGoogleApps={ this.submitWithDomain }
-					onSave={ this.handleSave.bind( this, 'googleAppsForm' ) }
-					initialState={ this.props.step.googleAppsForm }
-					analyticsSection="signup" />
-			</div>
-		);
 	},
 
 	domainForm: function() {
@@ -229,10 +192,6 @@ const DomainsStep = React.createClass( {
 
 		if ( 'mapping' === this.props.stepSectionName ) {
 			content = this.mappingForm();
-		}
-
-		if ( 'google' === this.props.stepSectionName ) {
-			content = this.googleAppsForm();
 		}
 
 		if ( ! this.props.stepSectionName ) {
