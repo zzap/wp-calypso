@@ -76,7 +76,8 @@ class ImageEditorCrop extends Component {
 			top: props.bounds.topBound,
 			left: props.bounds.leftBound,
 			bottom: props.bounds.bottomBound,
-			right: props.bounds.rightBound
+			right: props.bounds.rightBound,
+			wasCropSet: false
 		};
 	}
 
@@ -102,7 +103,10 @@ class ImageEditorCrop extends Component {
 			} );
 		}
 
-		if ( aspectRatio !== newProps.aspectRatio ) {
+		if (
+			( aspectRatio !== newProps.aspectRatio ) ||
+			! this.state.wasCropSet
+		) {
 			this.updateCrop( this.getDefaultState( newProps ), newProps, this.applyCrop );
 		}
 	}
@@ -112,8 +116,16 @@ class ImageEditorCrop extends Component {
 
 		const aspectRatio = props.aspectRatio;
 
+		this.setState( { wasCropSet: false } );
+
 		if ( aspectRatio === AspectRatios.FREE ) {
-			this.setState( newValues, callback );
+			this.setState(
+				{
+					...newValues,
+					wasCropSet: true
+				},
+				callback
+			);
 
 			return;
 		}
@@ -178,7 +190,13 @@ class ImageEditorCrop extends Component {
 			newValues.right = newState.left + finalWidth;
 		}
 
-		this.setState( newValues, callback );
+		this.setState(
+			{
+				...newValues,
+				wasCropSet: true
+			},
+			callback
+		);
 	}
 
 	onTopLeftDrag( x, y ) {
